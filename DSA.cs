@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -218,25 +219,52 @@ namespace DataStructureandAlgorithm
             {
                 Console.WriteLine("Customername: "+r.CustomerName+" Total OrderAmount: "+r.TotalAmount+" Orders Count: "+r.OrdersCount);
             }
-            */
+
             var students = GetStudentDetails();
             var departments = GetDepartmentDetails();
             GroupStudentsWithDepartment(students, departments);
+            */
+
+            var customers = GetCustomerDetails();
+            var transactions = GetTransactionDetails();
+            var topthreetransactions = GettopThreeTransaction(customers, transactions);
+            foreach(var top in topthreetransactions)
+            {
+                Console.WriteLine("Customer Name: "+top.Customername+ "Amount Paid: " + top.AmountPaid);
+            }
             Console.ReadLine();
+        }
+        public static List<TransactionDetails> GetTransactionDetails()
+        {
+            return new List<TransactionDetails>
+            {
+                new TransactionDetails { TransactionId=1, CustomerID = 1, AmountPaid = 200 },
+                new TransactionDetails { TransactionId=2, CustomerID = 2, AmountPaid = 120 },
+                new TransactionDetails { TransactionId=3, CustomerID = 3, AmountPaid = 300 }, //2
+                new TransactionDetails { TransactionId=4, CustomerID = 1, AmountPaid = 220 },  //3
+                new TransactionDetails { TransactionId=5, CustomerID = 2, AmountPaid = 20 },
+                new TransactionDetails { TransactionId=6, CustomerID = 3, AmountPaid = 330 }, //1
+                new TransactionDetails { TransactionId=7, CustomerID = 1, AmountPaid = 90 },
+                new TransactionDetails { TransactionId=8, CustomerID = 2, AmountPaid = 120 },
+                new TransactionDetails { TransactionId=9, CustomerID = 3, AmountPaid = 175 },
+                new TransactionDetails { TransactionId=10, CustomerID = 2, AmountPaid = 100 },
+            };
         }
         public static void GroupStudentsWithDepartment(List<Student> student, List<Department> department)
         {
-            var query = (from s in student join d in department
-                        on s.DepartmentId equals d.Id group s by d.DepartmentName into groupedDept
-                        select new
-                        {
-                            StudentName = groupedDept.Select(x=>x.StudentName).ToList(),
-                            DepartmentName = groupedDept.Key
-                        }).ToList();
-            foreach(var q in query)
+            var query = (from s in student
+                         join d in department
+                        on s.DepartmentId equals d.Id
+                         group s by d.DepartmentName into groupedDept
+                         select new
+                         {
+                             StudentName = groupedDept.Select(x => x.StudentName).ToList(),
+                             DepartmentName = groupedDept.Key
+                         }).ToList();
+            foreach (var q in query)
             {
-                Console.WriteLine("Department Name: "+q.DepartmentName);
-                Console.WriteLine("Student Name: "+string.Join(",", q.StudentName));
+                Console.WriteLine("Department Name: " + q.DepartmentName);
+                Console.WriteLine("Student Name: " + string.Join(",", q.StudentName));
             }
         }
         public static List<Student> GetStudentDetails()
@@ -281,14 +309,15 @@ namespace DataStructureandAlgorithm
         }
         public static List<CustomersOrder> CustomerWithOrders(List<Customer> customers, List<Order> orders)
         {
-            return (from cust in customers join order in orders on cust.Id equals order.CustomerId
-                        group order by cust.Name into groupedcust
-                        select new CustomersOrder
-                        {
-                            CustomerName = groupedcust.Key,
-                            TotalAmount = groupedcust.Sum(x => x.Amount),
-                            OrdersCount = groupedcust.Select(x=>x.Id).Count(),
-                        }).ToList();    
+            return (from cust in customers
+                    join order in orders on cust.Id equals order.CustomerId
+                    group order by cust.Name into groupedcust
+                    select new CustomersOrder
+                    {
+                        CustomerName = groupedcust.Key,
+                        TotalAmount = groupedcust.Sum(x => x.Amount),
+                        OrdersCount = groupedcust.Select(x => x.Id).Count(),
+                    }).ToList();
         }
         public static List<Employees> GetEmployeeDetails()
         {
@@ -363,12 +392,44 @@ namespace DataStructureandAlgorithm
                         EmployeeNames = groupedDept.Select(x => x.EmployeeName).ToList(),
                     }).ToList();
         }
+        public static List<HighestTransaction> GettopThreeTransaction(List<Customer> customers, List<TransactionDetails> transactions)
+        {
+            /*we need to fetch the 
+             * -transaction id,
+             * -customer name, 
+             * -amount paid  
+             * 
+             * what we need to display in output. 
+             * -customer name
+             * -the amount he paid
+             */
+
+            return (from customer in customers
+                         join transaction in transactions
+                        on customer.Id equals transaction.CustomerID
+                         select new HighestTransaction
+                         {
+                             Customername = customer.Name,
+                             AmountPaid = transaction.AmountPaid
+                         }).OrderByDescending(x => x.AmountPaid).Take(3).ToList();
+        }
+    }
+    public class HighestTransaction
+    {
+        public string Customername{ get; set; }
+        public decimal AmountPaid { get; set; }
+    }
+    public class TransactionDetails
+    {
+        public int TransactionId { get; set; }
+        public int CustomerID { get; set; }
+        public decimal AmountPaid { get; set; }
     }
     public class Student
     {
-        public int Id{ get; set; }
+        public int Id { get; set; }
         public string StudentName { get; set; }
-        public int Marks  { get; set; }
+        public int Marks { get; set; }
         public int DepartmentId { get; set; }
     }
     public class Department
