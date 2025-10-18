@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -186,7 +187,7 @@ namespace DataStructureandAlgorithm
     }
     public class BOFA
     {
-        public static void Main()
+        public static void HoldMain()
         {
             /*
             var employeeDetails = GetEmployeeDetails();
@@ -228,9 +229,9 @@ namespace DataStructureandAlgorithm
             var customers = GetCustomerDetails();
             var transactions = GetTransactionDetails();
             var topthreetransactions = GettopThreeTransaction(customers, transactions);
-            foreach(var top in topthreetransactions)
+            foreach (var top in topthreetransactions)
             {
-                Console.WriteLine("Customer Name: "+top.Customername+ "Amount Paid: " + top.AmountPaid);
+                Console.WriteLine("Customer Name: " + top.Customername + " Amount Paid: " + top.AmountPaid);
             }
             Console.ReadLine();
         }
@@ -405,18 +406,18 @@ namespace DataStructureandAlgorithm
              */
 
             return (from customer in customers
-                         join transaction in transactions
-                        on customer.Id equals transaction.CustomerID
-                         select new HighestTransaction
-                         {
-                             Customername = customer.Name,
-                             AmountPaid = transaction.AmountPaid
-                         }).OrderByDescending(x => x.AmountPaid).Take(3).ToList();
+                    join transaction in transactions
+                   on customer.Id equals transaction.CustomerID
+                    select new HighestTransaction
+                    {
+                        Customername = customer.Name,
+                        AmountPaid = transaction.AmountPaid
+                    }).OrderByDescending(x => x.AmountPaid).Take(3).ToList();
         }
     }
     public class HighestTransaction
     {
-        public string Customername{ get; set; }
+        public string Customername { get; set; }
         public decimal AmountPaid { get; set; }
     }
     public class TransactionDetails
@@ -480,5 +481,106 @@ namespace DataStructureandAlgorithm
     {
         public string DepartmentName { get; set; }
         public List<string> EmployeeNames { get; set; }
+    }
+}
+
+namespace PracticeLinq
+{
+    public class Program
+    {
+        public static void Main()
+        {
+            /*
+            var array = Enumerable.Range(1, 10).ToArray();
+            var result = FindSumOfSquares(array);
+            Console.WriteLine(result);
+
+            var array = Enumerable.Range(1, 30).ToArray();
+            GroupByRemainder(array);
+
+            var array = new int[] { 12, 1, 2, 1, 12, 12, 10, 11, 11, 13, 51, 13 };
+            var result = TopFiveLargestNumber(array);
+            Console.WriteLine(string.Join(",", result));
+
+            Console.WriteLine(AverageOfOdd(array));
+
+            var array = Enumerable.Range(1, 100).ToArray();
+            var result = NumberEndsWith(array);
+            Console.WriteLine(string.Join(",", result));
+
+            var array = new int[] { 10, 2, 3, 9, 3, 8, 9, 11, 11, 12, 13, 12, 1 };
+            int value = SecondHighestDistinctNumber(array);
+            Console.WriteLine(value);
+
+            var words = new List<string> { "anith", "ashvath", "mufeed", "dhanu", "eat onion" };
+            var result = WordsHaveMoreVowels(words);
+            Console.WriteLine(string.Join(",", result));
+             */
+            var numbers = Enumerable.Range(1, 19).ToList();
+            var result = GroupNumbers(numbers);
+            Console.WriteLine("Even Count: "+result.Item1);
+            Console.WriteLine("Odd Count: "+result.Item2);
+            Console.ReadLine();
+        }
+        public static int FindSumOfSquares(int[] array)
+        {
+            return array.Select(x => x * x).Sum();
+        }
+        public static void GroupByRemainder(int[] array)
+        {
+            var groupRemainder = array.GroupBy(x => x % 3).Select(x => new
+            {
+                Remainder = x.Key,
+                Numbers = x.ToList()
+            }).ToList();
+            foreach (var group in groupRemainder)
+            {
+                Console.WriteLine(group.Remainder);
+                Console.WriteLine(string.Join(",", group.Numbers));
+            }
+        }
+        public static List<int> TopFiveLargestNumber(int[] array)
+        {
+            return array.Distinct().OrderByDescending(x => x).Take(5).ToList();
+        }
+        public static double AverageOfOdd(int[] array)
+        {
+            return array.Where(x => x % 2 != 0).Average();
+        }
+        public static List<int> NumberEndsWith(int[] array)
+        {
+            return array.Where(x => x % 10 == 7).ToList();
+        }
+        public static int SecondHighestDistinctNumber(int[] array)
+        {
+            var distinct = array.Distinct();
+            var max = array.Distinct().Max(x => x);
+            return distinct.Where(x => x < max).Max();
+
+        }
+        public static List<string> WordsHaveMoreVowels(List<string> words)
+        {
+            return words.Where(x=>x.Count(x=>"AEIOUaeiou".Contains(x)) > 3).ToList();
+        }
+        public static (int, int) GroupNumbers(List<int> Numbers)
+        {
+            int oddCount = 0;
+            int EvenCount = 0;
+            var query = Numbers.GroupBy(x => x % 2 == 0 ? "Even" : "Odd").Select(x => new
+            {
+                Type = x.Key,
+                Count = x.Count()
+
+            }).ToList();
+            
+            foreach(var q in query)
+            {
+                if(q.Type == "Even")
+                    EvenCount = q.Count;
+                else
+                    oddCount = q.Count;
+            }
+            return (EvenCount, oddCount);
+        }
     }
 }
