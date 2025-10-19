@@ -488,7 +488,7 @@ namespace PracticeLinq
 {
     public class Program
     {
-        public static void Main()
+        public static void HoldMain()
         {
             /*
             var array = Enumerable.Range(1, 10).ToArray();
