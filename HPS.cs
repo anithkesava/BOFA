@@ -10,9 +10,12 @@ namespace BOFA
     {
         public static void Main()
         {
+            /*
             string input = "anith";
             var output = ReverseString(input);
             Console.WriteLine(output);
+            */
+            Console.WriteLine(ReverseNumber(123));
             Console.ReadLine();
         }
 
@@ -24,6 +27,26 @@ namespace BOFA
                 reverseString += str[i];
             }
             return reverseString;
+        }
+
+        public static long ReverseNumber(long num)
+        {
+            /*
+            while, Reverse a number remember this 
+             - divided by 10 removes the last digit.
+             - module by 10 get the last number. 
+
+             */
+            //assume the number, 123
+            long reversed = 0;
+            while(num!=0)
+            {
+                var rem = num % 10;
+                reversed = (reversed * 10) + rem;
+                num /= 10;
+            }
+
+            return reversed;
         }
     }
 }
