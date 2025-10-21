@@ -50,6 +50,7 @@ namespace DataStructureandAlgorithm
             else
                 Console.WriteLine("[]");
             */
+            
             Console.ReadLine();
         }
         public static List<string> CompareStrings(List<string> str1, List<string> str2)
@@ -488,7 +489,7 @@ namespace PracticeLinq
 {
     public class Program
     {
-        public static void Main()
+        public static void NotMain()
         {
             /*
             var array = Enumerable.Range(1, 10).ToArray();
@@ -515,11 +516,12 @@ namespace PracticeLinq
             var words = new List<string> { "anith", "ashvath", "mufeed", "dhanu", "eat onion" };
             var result = WordsHaveMoreVowels(words);
             Console.WriteLine(string.Join(",", result));
-             */
+
             var numbers = Enumerable.Range(1, 19).ToList();
             var result = GroupNumbers(numbers);
             Console.WriteLine("Even Count: "+result.Item1);
             Console.WriteLine("Odd Count: "+result.Item2);
+            */
             Console.ReadLine();
         }
         public static int FindSumOfSquares(int[] array)
